@@ -83,7 +83,7 @@ def recreate_directory_branch_in_bank(file_name):
     # please consult the link below:
     # https://stackoverflow.com/questions/4579908/cross-platform-splitting-of-path-in-python/4580931#4580931
     final_directory_branch = get_bank_location() + file_directory_branch
-    username               = pwd.getpwuid(os.getuid()).pw_name + '/'
+    username               = '/' + pwd.getpwuid(os.getuid()).pw_name
     final_directory_branch = \
             nth_repl(final_directory_branch, username, "", 2)
 
