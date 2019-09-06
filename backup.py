@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# This script is meant to save the chosen script, 
+# This script is meant to save the chosen script,
 # with it's full path into "bank" directory.
 # Precious scripts need proper place for them :)
 
@@ -40,7 +40,7 @@ def check_arguments():
                 " <path to script>" + \
                 os.linesep)
         sys.exit(1)
-    
+
 def make_sure_bank_exists():
     if not os.path.isdir(get_bank_location()):
         print("WARNING" +                           \
@@ -65,8 +65,8 @@ def get_bank_location():
 # WARN: This is Linux specific, for obvious reasons.
 def recreate_directory_branch_in_bank(file_name):
     file_directory_branch = absolute_path(file_name)
-    
-    # TODO: print warning about fetching something from home directory, 
+
+    # TODO: print warning about fetching something from home directory,
     # or at least store this warning and display it later
 
     if file_directory_branch.find("home") != -1:
@@ -77,9 +77,9 @@ def recreate_directory_branch_in_bank(file_name):
                 "it will be placed into directory with the same name" + \
                 os.linesep +                                            \
                 "but stripped from the username directory" +            \
-                os.linesep) 
+                os.linesep)
 
-    # WARN: If there's ever a need to implement this for other platforms, 
+    # WARN: If there's ever a need to implement this for other platforms,
     # please consult the link below:
     # https://stackoverflow.com/questions/4579908/cross-platform-splitting-of-path-in-python/4580931#4580931
     final_directory_branch = get_bank_location() + file_directory_branch
@@ -87,7 +87,7 @@ def recreate_directory_branch_in_bank(file_name):
     final_directory_branch = \
             nth_repl(final_directory_branch, username, "", 2)
 
-    try: 
+    try:
         os.makedirs(final_directory_branch)
         print(                           \
                 "Directory branch "    + \
@@ -111,7 +111,6 @@ def main():
     make_sure_bank_exists()
 
     script_file_names = sys.argv[1:]
-    print(len(script_file_names))
 
     for file_name in script_file_names:
         check_if_file_exists(file_name)
