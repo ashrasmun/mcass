@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# This script changes the color using the 
+config_path=~/.config/rofi/config.rasi
+
+text_color=$(xrdb -query | grep -E "\*color0:.*" | cut -f2)
+chosen_text_color=$(xrdb -query | grep -E "\*color4:.*" | cut -f2)
+background_color=$(xrdb -query | grep -E "\*color7:.*" | cut -f2)
+
+sed --in-place "s/background-color: #....../background-color: $background_color/" $config_path
+
+# Substitute first text-color with typical text color
+pattern='text-color: #......'
+sed --in-place "0,/$pattern/s//text-color: $text_color/" $config_path
+
+# Substitute second text-color with chosen text color
+# https://stackoverflow.com/questions/19075671/how-do-i-use-shell-variables-in-an-awk-script
+# https://stackoverflow.com/a/32995760/2059351
+chosen_text_color_pattern='text-color: '$chosen_text_color
+echo "$(awk '/text-color: #....../{c++;if(c==2){sub(old,new)}}1' old="${pattern}" new="${chosen_text_color_pattern}" $config_path)" > $config_path

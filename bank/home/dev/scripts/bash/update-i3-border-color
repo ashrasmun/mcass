@@ -1,0 +1,24 @@
+#!/bin/bash
+
+config_path=~/.config/i3/config
+
+# this one is for grep, cause sed is just stupid
+regex=(client\.focused).*#.*#.*#.*#.*#.*
+
+# Find the line with color defined and remove the last record
+old=$(grep -E "$regex" $config_path | rev | cut -d# -f 3- | rev)
+
+# Determine the new color for border
+border_color=$(xrdb -query | grep -E "\*color7:.*" | cut -f2)
+indicator_color=$(xrdb -query | grep -E "\*color8:.*" | cut -f2)
+
+new=$old
+new+=$indicator_color
+new+=' '
+new+=$border_color
+
+# Substitute old color with new one
+sed --in-place "s/\(client\.focused\).*#.*#.*#.*#.*#.*/$new/g" $config_path
+
+# Reload i3 and suppress the [{"success":true}] message
+i3-msg reload > /dev/null

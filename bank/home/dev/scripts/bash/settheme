@@ -1,0 +1,94 @@
+#!/bin/bash
+
+#
+# Changes the theme by using pywal 
+#
+# Args:
+# 1. Path to wallpaper
+# 2. Light mode (optional)
+#
+
+# -------------------------- #
+# ---- LOCAL FUNCTIONS ----- #
+# -------------------------- #
+
+function var_exists() {
+    # 'arg' exists (empty or nonempty)
+    # AND
+    # '$arg' expands to a nonempty string
+
+    arg=$1
+
+    [[ ${arg+x} && $arg ]]
+}
+
+function file_exists() {
+    arg=$1
+
+    if ! var_exists $arg
+    then
+        return 1
+    fi 
+
+    [[ -f $arg ]]
+}
+
+# -------------------------- #
+# - END OF LOCAL FUNCTIONS - #
+# -------------------------- #
+
+# Flush Xresources entirely
+xrdb -remove *
+
+wallpaper_filename=$1
+
+if ! file_exists $wallpaper_filename
+then
+    THIS_SCRIPTS_LOCATION="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+    echo Please provide a valid image filename
+    echo If you want to edit this script, please visit $THIS_SCRIPTS_LOCATION
+
+    exit 1
+fi
+
+# Theme can be set as "dark" or "light". Lack of theme assumes the dark one.
+user_theme_option=$2
+
+case $user_theme_option in
+    light)
+        wal_light_theme_option=-l
+        ;;
+    "")
+        ;;
+    *)
+        echo INFO: If you want to use light mode, please use the "light" option
+        exit 1
+esac
+
+# Change the color scheme based on wallpaper, but don't set it
+# because it doesn't work properly with dual monitor wallpapers
+wal -i $wallpaper_filename -n $wal_light_theme_option
+
+# TEMP: Commented out until pywal gets fixed
+# wal --preview
+
+# Set wallpaper for dual monitor without duplicating / stretching
+# Thanks to DaFuckIsWrongWithU @ https://www.reddit.com/r/unixporn/comments/6c7nlx/question_how_to_assign_dual_monitor_wallpapers/ !
+feh --bg-scale --no-xinerama $wallpaper_filename
+
+# Copy wallpaper to resources. I don't know why I need to do it
+# but it works only when I do it...
+sudo cp --update $PWD/$wallpaper_filename /usr/share/backgrounds
+
+# Touch the file because other scripts rely on this background being the youngest
+sudo touch /usr/share/backgrounds/$wallpaper_filename
+
+# Change the wallpaper for greeting screen
+sudo sed --in-place "2s/.*/background = \/usr\/share\/backgrounds\/$wallpaper_filename/" "/etc/lightdm/lightdm-gtk-greeter.conf" 
+
+# Update various configurations
+update-polybar-underline-color
+update-i3-border-color
+update-rofi-colors
+

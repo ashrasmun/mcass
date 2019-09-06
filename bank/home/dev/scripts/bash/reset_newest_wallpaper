@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Reset the newest wallpaper
+newest_wallpaper=/$(find /usr/share/backgrounds -type f -printf '%T+ %p\n' | sort | tail -n 1 | cut -d/ -f 2-)
+feh --bg-scale --no-xinerama $newest_wallpaper

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+config_path=~/.config/polybar/config
+
+# Determine the new color for border
+border_color=$(xrdb -query | grep -E "\*color7:.*" | cut -f2)
+
+sed --in-place "s/primary = #.*/primary = $border_color/" $config_path
+
+launch_polybar 2>&1 &>/dev/null & disown
