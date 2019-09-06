@@ -110,11 +110,14 @@ def main():
     check_arguments()
     make_sure_bank_exists()
 
-    script_file_name = sys.argv[1]
-    check_if_file_exists(script_file_name)
+    script_file_names = sys.argv[1:]
+    print(len(script_file_names))
 
-    directory_branch = recreate_directory_branch_in_bank(script_file_name)
-    copy_file_with_permissions(script_file_name, directory_branch)
+    for file_name in script_file_names:
+        check_if_file_exists(file_name)
+
+        directory_branch = recreate_directory_branch_in_bank(file_name)
+        copy_file_with_permissions(file_name, directory_branch)
 
     print("Please check if everything's fine :)")
 
