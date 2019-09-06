@@ -42,12 +42,12 @@ def check_arguments():
         sys.exit(1)
     
 def make_sure_bank_exists():
-    if not os.path.isdir("bank"):
+    if not os.path.isdir(get_bank_location()):
         print("WARNING" +                           \
                 os.linesep +                        \
                 "Bank doesn't exist! Creating..." + \
                 os.linesep)
-        os.mkdir("bank")
+        os.mkdir(get_bank_location())
 
 def check_if_file_exists(file_name):
     if not os.path.isfile(file_name):
@@ -59,11 +59,11 @@ def check_if_file_exists(file_name):
                 os.linesep)
         sys.exit(1)
 
+def get_bank_location():
+    return os.path.join(absolute_path(__file__), "bank")
+
 # WARN: This is Linux specific, for obvious reasons.
 def recreate_directory_branch_in_bank(file_name):
-    bank_location = os.path.join(                      \
-            os.path.dirname(os.path.abspath(__file__)),\
-            "bank")
     file_directory_branch = absolute_path(file_name)
     
     # TODO: print warning about fetching something from home directory, 
@@ -82,7 +82,7 @@ def recreate_directory_branch_in_bank(file_name):
     # WARN: If there's ever a need to implement this for other platforms, 
     # please consult the link below:
     # https://stackoverflow.com/questions/4579908/cross-platform-splitting-of-path-in-python/4580931#4580931
-    final_directory_branch = bank_location + file_directory_branch
+    final_directory_branch = get_bank_location() + file_directory_branch
     username               = pwd.getpwuid(os.getuid()).pw_name + '/'
     final_directory_branch = \
             nth_repl(final_directory_branch, username, "", 2)
