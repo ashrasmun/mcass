@@ -70,14 +70,7 @@ def recreate_directory_branch_in_bank(file_name):
     # or at least store this warning and display it later
 
     if file_directory_branch.find("home") != -1:
-        print("WARNING:" +                                              \
-                os.linesep +                                            \
-                "The script's path contains 'home' directory" +         \
-                os.linesep +                                            \
-                "it will be placed into directory with the same name" + \
-                os.linesep +                                            \
-                "but stripped from the username directory" +            \
-                os.linesep)
+        warn_about_home = True
 
     # WARN: If there's ever a need to implement this for other platforms,
     # please consult the link below:
@@ -95,13 +88,11 @@ def recreate_directory_branch_in_bank(file_name):
                 " created"             + \
                 os.linesep)
     except FileExistsError:
-        print(                           \
-                "Directory branch "    + \
-                final_directory_branch + \
-                " already exists"      + \
-                os.linesep)
+        pass
+    except:
+        print("Unspecified error encountered!");
 
-    return final_directory_branch
+    return (final_directory_branch, warn_about_home)
 
 def copy_file_with_permissions(script_file_name, to):
     shutil.copy2(script_file_name, to)
@@ -111,12 +102,26 @@ def main():
     make_sure_bank_exists()
 
     script_file_names = sys.argv[1:]
+    should_warn_about_home = False
 
     for file_name in script_file_names:
         check_if_file_exists(file_name)
 
-        directory_branch = recreate_directory_branch_in_bank(file_name)
+        (directory_branch, was_home_used) = \
+                recreate_directory_branch_in_bank(file_name)
+
+        if was_home_used:
+            should_warn_about_home = True
+
         copy_file_with_permissions(file_name, directory_branch)
+
+    if should_warn_about_home:
+        print("WARNING:" +                                           \
+                os.linesep +                                         \
+                "Scripts located in 'home' directory" +              \
+                " will be placed into directory with the same name" + \
+                " but stripped from the 'username' directory" +       \
+                os.linesep)
 
     print("Please check if everything's fine :)")
 
