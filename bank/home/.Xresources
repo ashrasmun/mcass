@@ -1,0 +1,7 @@
+URxvt.scrollBar: false
+
+URxvt.transparent: true
+URxvt.shading: 10
+
+!*font: xft:inconsolata for powerline:size=13
+*alpha: 0.9
