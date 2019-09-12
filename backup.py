@@ -23,29 +23,29 @@ def replacenth(string, sub, wanted, n):
 
 def check_arguments():
     if len(sys.argv) < 2:
-        sys.stderr.write("ERROR:" +   \
-                os.linesep +          \
-                "Usage: " +           \
-                sys.argv[0] +         \
+        sys.stderr.write("ERROR:"   + \
+                os.linesep          + \
+                "Usage: "           + \
+                sys.argv[0]         + \
                 " <path to script>" + \
                 os.linesep)
         sys.exit(1)
 
 def make_sure_bank_exists():
     if not os.path.isdir(mcass_utils.get_bank_location()):
-        print("WARNING" +                           \
-                os.linesep +                        \
+        print("WARNING"                           + \
+                os.linesep                        + \
                 "Bank doesn't exist! Creating..." + \
                 os.linesep)
         os.mkdir(mcass_utils.get_bank_location())
 
 def check_if_file_exists(file_name):
     if not os.path.isfile(file_name):
-        sys.stderr.write("ERROR:" +        \
-                os.linesep +               \
-                "Provided path (" +        \
+        sys.stderr.write("ERROR:"        + \
+                os.linesep               + \
+                "Provided path ("        + \
                 absolute_path(file_name) + \
-                ") is invalid" +           \
+                ") is invalid"           + \
                 os.linesep)
         sys.exit(1)
 
@@ -65,9 +65,9 @@ def prepare_path_in_bank(bank_location, file_path, user_name):
 # to take care of it after introducing unit tests for these scripts,
 # as some of the functions start to get out of hand.
 def recreate_directory_branch_in_bank(file_name):
-    dir_branch = prepare_path_in_bank(             \
-            mcass_utils.get_bank_location(),       \
-            mcass_utils.absolute_path(file_name),  \
+    dir_branch = prepare_path_in_bank(            \
+            mcass_utils.get_bank_location(),      \
+            mcass_utils.absolute_path(file_name), \
             pwd.getpwuid(os.getuid()).pw_name)
 
     if dir_branch.find("home") != -1:
@@ -109,11 +109,11 @@ def main():
         copy_file_with_permissions(file_name, directory_branch)
 
     if should_warn_about_home:
-        print("WARNING:" +                                           \
-                os.linesep +                                         \
-                "Scripts located in 'home' directory" +              \
+        print("WARNING:"                                            + \
+                os.linesep                                          + \
+                "Scripts located in 'home' directory"               + \
                 " will be placed into directory with the same name" + \
-                " but stripped from the 'username' directory" +       \
+                " but stripped from the 'username' directory"       + \
                 os.linesep)
 
     print("Please check if everything's fine :)")
