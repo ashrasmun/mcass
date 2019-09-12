@@ -45,7 +45,7 @@ runtime! archlinux.vim
 :set fillchars+=vert:│
 
 " Treat underscores as "word" separators
-:set iskeyword-=_
+" :set iskeyword-=_
 
 " Remove background from vertical splits
 " to make it less noisy
