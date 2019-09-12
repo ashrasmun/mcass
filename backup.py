@@ -8,28 +8,18 @@ import sys
 import os
 import shutil
 import pwd
+import re
+import mcass_utils
 
-# Credit to https://stackoverflow.com/a/35092436/2059351
-# I was too tired to implement it myself when I needed... bummer
-def nth_repl(s, sub, repl, nth):
-    find = s.find(sub)
-    # if find is not p1 we have found at least one match for the substring
-    i = find != -1
-
-    # loop util we find the nth or we find no match
-    while find != -1 and i != nth:
-        # find + 1 means we start at the last match start index + 1
-        find = s.find(sub, find + 1)
-        i += 1
-
-    # if i  is equal to nth we found nth matches so replace
-    if i == nth:
-        return s[:find] + repl + s[find + len(sub):]
-
-    return s
-
-def absolute_path(file_name):
-    return os.path.dirname(os.path.realpath(file_name))
+# Credits to https://stackoverflow.com/a/35091558/2059351
+# It throws on wrong indices... I will write this myself, sooner or later >.>
+def replacenth(string, sub, wanted, n):
+    where = [m.start() for m in re.finditer(sub, string)][n - 1]
+    before = string[:where]
+    after = string[where:]
+    after = after.replace(sub, wanted)
+    newString = before + after
+    return newString
 
 def check_arguments():
     if len(sys.argv) < 2:
@@ -42,12 +32,12 @@ def check_arguments():
         sys.exit(1)
 
 def make_sure_bank_exists():
-    if not os.path.isdir(get_bank_location()):
+    if not os.path.isdir(mcass_utils.get_bank_location()):
         print("WARNING" +                           \
                 os.linesep +                        \
                 "Bank doesn't exist! Creating..." + \
                 os.linesep)
-        os.mkdir(get_bank_location())
+        os.mkdir(mcass_utils.get_bank_location())
 
 def check_if_file_exists(file_name):
     if not os.path.isfile(file_name):
@@ -59,40 +49,43 @@ def check_if_file_exists(file_name):
                 os.linesep)
         sys.exit(1)
 
-def get_bank_location():
-    return os.path.join(absolute_path(__file__), "bank")
-
 # WARN: This is Linux specific, for obvious reasons.
+# If there's ever a need to implement this for other platforms,
+# please consult the link below:
+# https://stackoverflow.com/questions/4579908/cross-platform-splitting-of-path-in-python/4580931#4580931
+def prepare_path_in_bank(bank_location, file_path, user_name):
+    final_directory_branch = \
+        bank_location +      \
+        replacenth(file_path, '/' + user_name, "", 1) 
+
+    return final_directory_branch
+
+# NOTE: This works only for scripts located in subdirectory of 
+# $HOME directory. I'm too tired to fix it now tho. It would be nice
+# to take care of it after introducing unit tests for these scripts,
+# as some of the functions start to get out of hand.
 def recreate_directory_branch_in_bank(file_name):
-    file_directory_branch = absolute_path(file_name)
+    dir_branch = prepare_path_in_bank(             \
+            mcass_utils.get_bank_location(),       \
+            mcass_utils.absolute_path(file_name),  \
+            pwd.getpwuid(os.getuid()).pw_name)
 
-    # TODO: print warning about fetching something from home directory,
-    # or at least store this warning and display it later
-
-    if file_directory_branch.find("home") != -1:
+    if dir_branch.find("home") != -1:
         warn_about_home = True
 
-    # WARN: If there's ever a need to implement this for other platforms,
-    # please consult the link below:
-    # https://stackoverflow.com/questions/4579908/cross-platform-splitting-of-path-in-python/4580931#4580931
-    final_directory_branch = get_bank_location() + file_directory_branch
-    username               = '/' + pwd.getpwuid(os.getuid()).pw_name
-    final_directory_branch = \
-            nth_repl(final_directory_branch, username, "", 2)
-
     try:
-        os.makedirs(final_directory_branch)
-        print(                           \
-                "Directory branch "    + \
-                final_directory_branch + \
-                " created"             + \
+        os.makedirs(dir_branch)
+        print(                        \
+                "Directory branch " + \
+                dir_branch          + \
+                " created"          + \
                 os.linesep)
     except FileExistsError:
         pass
     except:
         print("Unspecified error encountered!");
 
-    return (final_directory_branch, warn_about_home)
+    return (dir_branch, warn_about_home)
 
 def copy_file_with_permissions(script_file_name, to):
     shutil.copy2(script_file_name, to)
