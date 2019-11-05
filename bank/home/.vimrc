@@ -17,6 +17,14 @@ runtime! archlinux.vim
 " do not load defaults if ~/.vimrc is missing
 "let skip_defaults_vim=1
 
+""" Leaders
+" Set leader key to space
+:let mapleader = " "
+:nnoremap <Space> <Nop>
+
+" Quickly access this file
+noremap <Leader>v :e $MYVIMRC<CR>
+
 " Enable line numbering
 :set number relativenumber
 
@@ -139,9 +147,4 @@ map <C-h> <C-w>h
 map <C-j> <C-w>j
 map <C-k> <C-w>k
 map <C-l> <C-w>l
-
-"== LEADERS =="
-" Set leader key to space
-:let mapleader = " "
-:nnoremap <Space> <Nop>
 
