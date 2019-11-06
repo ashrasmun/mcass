@@ -82,10 +82,14 @@ endif
 " Interface clean-up
 if has('unix')
     " Remove background from vertical splits to make it less noisy
-    :highlight VertSplit cterm=NONE ctermfg=8
-    :highlight StatusLineNC ctermfg=0
-    :highlight clear CursorLineNr
-    :highlight CursorLineNr cterm=bold
+    function! s:restore_highlight_settings()
+        :highlight VertSplit cterm=NONE ctermfg=8
+        :highlight StatusLineNC ctermfg=0
+        :highlight clear CursorLineNr
+        :highlight CursorLineNr cterm=bold
+    endfunction
+
+    call <SID>restore_highlight_settings()
 elseif has('win32')
     " The only variation of vim usable on Windows is GVim, so all the settings
     " assume it's usage
@@ -200,14 +204,13 @@ if has('unix')
     noremap <F3> :Goyo<Enter>
 
     function! s:init_on_entering_goyo()
-        :silent !i3-msg fullscreen enable
-        :set number relativenumber
+        silent !i3-msg fullscreen enable
+        set number relativenumber
     endfunction
 
     function! s:clean_up_after_colon_qing_goyo()
-        :silent !i3-msg fullscreen disable
-        :highlight VertSplit cterm=NONE ctermfg=8
-        :highlight StatusLineNC ctermfg=0
+        silent !i3-msg fullscreen disable
+        call <SID>restore_highlight_settings()
         " TODO: Move cursor to the previous buffer
     endfunction
 
