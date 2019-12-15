@@ -247,6 +247,19 @@ endif
 " Treat underscores as "word" separators
 " :set iskeyword-=_
 
+if has('unix')
+    " Set the colorscheme to the one fitting pywal's settings
+    colorscheme wal
+elseif has('win32')
+    " 'pywal' is unavailable on Windows, but 'nord' is a very nice colorscheme
+    colorscheme nord
+endif
+
+"" Fonts
+if has('win32')
+    set guifont=Consolas:h18
+endif
+
 " Interface clean-up
 if has('unix')
     " Remove background from vertical splits to make it less noisy
@@ -272,14 +285,6 @@ elseif has('win32')
     set guioptions-=r " right-hand scroll bar
     set guioptions-=L " left-hand scroll bar
     set guioptions-=M " left-hand scroll bar
-endif
-
-if has('unix')
-    " Set the colorscheme to the one fitting pywal's settings
-    colorscheme wal
-elseif has('win32')
-    " 'pywal' is unavailable on Windows, but 'nord' is a very nice colorscheme
-    colorscheme nord
 endif
 
 """ Keybindings
