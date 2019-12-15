@@ -1,21 +1,24 @@
-" All system-wide defaults are set in $VIMRUNTIME/archlinux.vim (usually just
-" /usr/share/vim/vimfiles/archlinux.vim) and sourced by the call to :runtime
-" you can find below.  If you wish to change any of those settings, you should
-" do it in this file (/etc/vimrc), since archlinux.vim will be overwritten
-" everytime an upgrade of the vim packages is performed.  It is recommended to
-" make changes after sourcing archlinux.vim since it alters the value of the
-" 'compatible' option.
+if has('unix')
+    " All system-wide defaults are set in $VIMRUNTIME/archlinux.vim (usually just
+    " /usr/share/vim/vimfiles/archlinux.vim) and sourced by the call to :runtime
+    " you can find below. If you wish to change any of those settings, you should
+    " do it in this file (/etc/vimrc), since archlinux.vim will be overwritten
+    " everytime an upgrade of the vim packages is performed. It is recommended to
+    " make changes after sourcing archlinux.vim since it alters the value of the
+    " 'compatible' option.
 
-" This line should not be removed as it ensures that various options are
-" properly set to work with the Vim-related packages.
-runtime! archlinux.vim
+    " This line should not be removed as it ensures that various options are
+    " properly set to work with the Vim-related packages.
+    runtime! archlinux.vim
 
-" If you prefer the old-style vim functionalty, add 'runtime! vimrc_example.vim'
-" Or better yet, read /usr/share/vim/vim80/vimrc_example.vim or the vim manual
-" and configure vim to your own liking!
+    " If you prefer the old-style vim functionalty, add 'runtime!
+    " vimrc_example.vim' or better yet, read
+    " /usr/share/vim/vim80/vimrc_example.vim or the vim manual
+    " and configure vim to your own liking!
 
-" do not load defaults if ~/.vimrc is missing
-"let skip_defaults_vim=1
+    " do not load defaults if ~/.vimrc is missing
+    "let skip_defaults_vim=1
+endif
 
 """ Fundamental
 " Set leader key to space
@@ -61,50 +64,6 @@ set smartcase
 
 " Fix backspace behaviour
 set backspace=indent,eol,start
-
-""" Graphics
-
-if has('unix')
-    " Set the colorscheme to the one fitting pywal's settings
-    colorscheme wal
-elseif has('win32')
-    " 'pywal' is unavailable on Windows, but 'nord' is a very nice colorscheme
-    colorscheme nord
-endif
-
-" Set the delimiter to something less noisy
-" for example tmux's separator character
-:set fillchars+=vert:│
-
-" Treat underscores as "word" separators
-" :set iskeyword-=_
-
-" Interface clean-up
-if has('unix')
-    " Remove background from vertical splits to make it less noisy
-    function! s:restore_highlight_settings()
-        :highlight VertSplit cterm=NONE ctermfg=8
-        :highlight StatusLineNC ctermfg=0
-        :highlight clear CursorLineNr
-        :highlight CursorLineNr cterm=bold
-    endfunction
-
-    call <SID>restore_highlight_settings()
-elseif has('win32')
-    " The only variation of vim usable on Windows is GVim, so all the settings
-    " assume it's usage
-
-    " Remove background from vertical splits to make it less noisy.
-    :highlight VertSplit guibg=black guifg=white
-    :highlight StatusLineNC guibg=black guifg=white
-
-    " Remove GUI components
-    set guioptions-=m " menu bar
-    set guioptions-=T " toolbar
-    set guioptions-=r " right-hand scroll bar
-    set guioptions-=L " left-hand scroll bar
-    set guioptions-=M " left-hand scroll bar
-endif
 
 """ Plugins
 "" Load plugins (vim-plug)
@@ -279,6 +238,49 @@ elseif has('win32')
     noremap <F3> :Goyo<CR>:call FullscreenFix()<CR>
 endif
 
+""" Graphics
+
+" Set the delimiter to something less noisy
+" for example tmux's separator character
+:set fillchars+=vert:│
+
+" Treat underscores as "word" separators
+" :set iskeyword-=_
+
+" Interface clean-up
+if has('unix')
+    " Remove background from vertical splits to make it less noisy
+    function! s:restore_highlight_settings()
+        :highlight VertSplit cterm=NONE ctermfg=8
+        :highlight StatusLineNC ctermfg=0
+        :highlight clear CursorLineNr
+        :highlight CursorLineNr cterm=bold
+    endfunction
+
+    call <SID>restore_highlight_settings()
+elseif has('win32')
+    " The only variation of vim usable on Windows is GVim, so all the settings
+    " assume it's usage
+
+    " Remove background from vertical splits to make it less noisy.
+    :highlight VertSplit guibg=black guifg=white
+    :highlight StatusLineNC guibg=black guifg=white
+
+    " Remove GUI components
+    set guioptions-=m " menu bar
+    set guioptions-=T " toolbar
+    set guioptions-=r " right-hand scroll bar
+    set guioptions-=L " left-hand scroll bar
+    set guioptions-=M " left-hand scroll bar
+endif
+
+if has('unix')
+    " Set the colorscheme to the one fitting pywal's settings
+    colorscheme wal
+elseif has('win32')
+    " 'pywal' is unavailable on Windows, but 'nord' is a very nice colorscheme
+    colorscheme nord
+endif
 
 """ Keybindings
 " Map Ctrl-hjkl to move between windows
