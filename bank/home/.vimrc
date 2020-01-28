@@ -173,8 +173,8 @@ if has('unix')
         " TODO: Move cursor to the previous buffer
     endfunction
 
-    autocmd! User GoyoEnter call <SID>init_on_entering_goyo()
-    autocmd! User GoyoLeave call <SID>clean_up_after_colon_qing_goyo()
+    autocmd! User GoyoEnter nested call <SID>init_on_entering_goyo()
+    autocmd! User GoyoLeave nested call <SID>clean_up_after_colon_qing_goyo()
 elseif has('win32')
     " Make GVim fullscreen on startup
     " Don't feel tempted to use 64-bit version of this, as it doesn't work
