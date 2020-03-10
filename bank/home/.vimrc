@@ -1,3 +1,9 @@
+""" TODO """
+" 1. Python
+" 2. plugin update
+" 3. gvimfullscreen
+" 4. snippets
+
 if has('unix')
     " All system-wide defaults are set in $VIMRUNTIME/archlinux.vim (usually just
     " /usr/share/vim/vimfiles/archlinux.vim) and sourced by the call to :runtime
@@ -34,6 +40,37 @@ endif
 
 " Quickly source current file
 :noremap <Leader>s :source %<CR>
+
+"" Functions
+" This function trims the whole file!
+function! TrimTrailingWhitespaces() range
+    let l:save = winsaveview()
+    keeppatterns %s/\s\+$//e
+    call winrestview(l:save)
+endfunction
+
+:noremap <Leader>w :call TrimTrailingWhitespace()<CR>
+
+" Joins multiple lines into one line wihtout producing any spaces
+" Like gJ, but always remove spaces
+function! JoinSpaceless()
+    execute 'normal gJ'
+
+    " Character under cursor is whitespace?
+    if matchstr(getline('.'), '/%' . col('.') . 'c.') =~ '\s'
+        " Then remove it!
+        execute 'normal dw'
+    endif
+endfunction
+
+:noremap <Leader>J :call JoinSpaceless()<CR>
+
+" Remove all buffers but the one opened
+function! DeleteBuffersExceptOpened()
+    execute '%bdelete|edit #|normal `'
+endfunction
+
+:noremap <Leader>bd :call DeleteBuffersExceptOpened()<CR>
 
 " Enable line numbering
 :set number relativenumber
