@@ -49,7 +49,7 @@ function! TrimTrailingWhitespaces() range
     call winrestview(l:save)
 endfunction
 
-:noremap <Leader>w :call TrimTrailingWhitespace()<CR>
+:noremap <Leader>w :call TrimTrailingWhitespaces()<CR>
 
 " Joins multiple lines into one line wihtout producing any spaces
 " Like gJ, but always remove spaces
@@ -240,7 +240,7 @@ elseif has('win32')
     noremap <F12> :call ForceFullscreen()<CR>
     noremap <s-F12> :call ForceDoubleFullscreen()<CR>
 
-    " This function is here only to fix Goyo's behaviour in GVim while using the 
+    " This function is here only to fix Goyo's behaviour in GVim while using the
     " gvimfullscreen.dll. Goyo methods are a bit unreliable, so we need to run
     " separate function after Goyo is done doing what it's doing.
     function! FullscreenFix()
