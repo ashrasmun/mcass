@@ -1,9 +1,3 @@
-""" TODO """
-" 1. Python
-" 2. plugin update
-" 3. gvimfullscreen
-" 4. snippets
-
 if has('unix')
     " All system-wide defaults are set in $VIMRUNTIME/archlinux.vim (usually just
     " /usr/share/vim/vimfiles/archlinux.vim) and sourced by the call to :runtime
@@ -41,6 +35,9 @@ endif
 " Quickly source current file
 :noremap <Leader>s :source %<CR>
 
+" Remove highlight after searching
+:noremap <Leader>n :noh<CR>
+
 "" Functions
 " This function trims the whole file!
 function! TrimTrailingWhitespaces() range
@@ -51,13 +48,13 @@ endfunction
 
 :noremap <Leader>w :call TrimTrailingWhitespaces()<CR>
 
-" Joins multiple lines into one line wihtout producing any spaces
+" Joins multiple lines into one line without producing any spaces
 " Like gJ, but always remove spaces
 function! JoinSpaceless()
     execute 'normal gJ'
 
     " Character under cursor is whitespace?
-    if matchstr(getline('.'), '/%' . col('.') . 'c.') =~ '\s'
+    if matchstr(getline('.'), '\%' . col('.') . 'c.') =~ '\s'
         " Then remove it!
         execute 'normal dw'
     endif
@@ -72,11 +69,55 @@ endfunction
 
 :noremap <Leader>bd :call DeleteBuffersExceptOpened()<CR>
 
+"" Choose buffer
+:nnoremap <Leader>bb :buffers<CR>:b
+
+"" Folding
+"  Emulate IDE-like folding ability, so that it is possible to fold the code
+"  in {} block
+set foldmethod=indent
+set foldlevel=99
+nnoremap <Leader>f za
+
+"" Python
+" This is needed because the python is loaded dynamically
+if exists($VIM_PYTHON_PATH)
+    echom "You need to set VIM_PYTHON_PATH in order to use Python"
+else
+    set pythonthreehome=$VIM_PYTHON_PATH\
+    set pythonthreedll=$VIM_PYTHON_PATH\python37.dll
+endif
+
+" Silently invoke Python3 just to skip the annoying warning in the beginning.
+" It's left out here for compatibility reasons (this shouldn't be a problem
+" from Vim 8.2 onwards).
+if has('python3')
+    silent! python3 1
+endif
+
+" Add proper PEP8 indentation
+au BufNewFile,BufRead *.py
+    \ set tabstop=4
+    \ | set softtabstop=4
+    \ | set shiftwidth=4
+    \ | set textwidth=79
+    \ | set expandtab
+    \ | set autoindent
+    \ | set fileformat=unix
+
+let python_highlight_all=1
+
 " Enable line numbering
 :set number relativenumber
 
 " Highlight the searched result by default
 :set hlsearch
+
+" Remove all the swap / undo / backup files
+:set noundofile
+:set noswapfile
+:set nobackup
+:set nowritebackup
 
 " Makes the automatic tabs 4 spaces wide instead of 8 (!)
 :set expandtab
@@ -94,10 +135,15 @@ set list
 " Enable syntax highlighting
 :syntax on
 
+" Turn off file specific vim on-demand formatting
+set nomodeline
+
 " If searching in lowercase, ignore casing. Otherwise, check for a specific
 " string and take font case into consideration
 set ignorecase
 set smartcase
+set incsearch
+set hlsearch
 
 " Fix backspace behaviour
 set backspace=indent,eol,start
@@ -113,6 +159,8 @@ set backspace=indent,eol,start
 " in the end of the line in plug section. For example:
 " Enabled:  Plug 'junegunn/goyo.vim'
 " Disabled: Plug 'junegunn/goyo.vim', { 'on': [] }
+"
+" Automatically install vim-plug if it's not present
 if has('unix')
     if empty(glob('~/.vim/autoload/plug.vim'))
         silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
@@ -121,32 +169,38 @@ if has('unix')
     endif
 endif
 
-:call plug#begin('~/.vim/plugged')
-    " https://github.com/junegunn/goyo.vim
+let plugin_location=''
+if has('unix')
+    let plugin_location='~/.vim/plugged'
+elseif has('win32')
+    let plugin_location='$VIMRUNTIME\plugged'
+endif
+
+:call plug#begin(plugin_location)
     Plug 'junegunn/goyo.vim'
-    " TODO: Consider getting limelight
-
-    " https://vimawesome.com/plugin/surround-vim
     Plug 'tpope/vim-surround'
-
-    " https://github.com/scrooloose/nerdtree
+    Plug 'tpope/vim-repeat'
     Plug 'scrooloose/nerdtree'
-
-    " https://github.com/cespare/vim-toml
-    Plug 'cespare/vim-toml'
-
-    " https://github.com/easymotion/vim-easymotion
     Plug 'easymotion/vim-easymotion'
+
+    " File fuzzy searching
+    Plug 'kien/ctrlp.vim'
+
+    "" Programming related
+    Plug 'cespare/vim-toml'
+    Plug 'Valloric/YouCompleteMe'
 
     " Snippets with all of their's dependencies
     Plug 'SirVer/ultisnips'
     Plug 'honza/vim-snippets'
 
+    " Python
+    Plug 'vim-scripts/indentpython.vim'
+    Plug 'vim-syntastic/syntastic'
+    Plug 'nvie/vim-flake8'
+
     " Windows specific plugins
-    "if has('win32')
-    " https://github.com/arcticicestudio/nord-vim
     Plug 'arcticicestudio/nord-vim'
-    "endif
 
     " Linux specific plugins
     if has('unix')
@@ -159,8 +213,21 @@ endif
     endif
 :call plug#end()
 
-" Plugin installation
+" Plugin Install
 noremap <Leader>pi :source %<CR>:PlugInstall<CR>
+
+" Plugin Update
+noremap <Leader>pu :source %<CR>:PlugUpdate<CR>
+
+"" CtrlP
+" let g:ctrlp_working_path_mode = 0
+
+"" YouCompleteMe
+let g:ycm_autoclose_preview_window_after_completion=1
+map <Leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+let g:ycm_key_list_previous_completion = ['<s-tab>', '<Up>'] " Works with Ctrl-P
+let g:ycm_key_list_select_completion = ['<tab>', '<Down>'] " Works with Ctrl-N
 
 "" vim-airline config
 if has('unix')
@@ -175,10 +242,10 @@ if has('unix')
     let g:airline_symbols.space = "\ua0"
 endif
 
-"" NERDTree config
+"" NERDTree
 " Invoke nerd tree every time vim is opened
 " and focus on buffer with file
-autocmd VimEnter * NERDTree | wincmd w
+" autocmd VimEnter * NERDTree | wincmd w
 
 " Close vim when NERDTree buffer is the only one present
 " In case of emergency, visit:
@@ -218,19 +285,21 @@ elseif has('win32')
     " REQUIRES: https://github.com/derekmcloughlin/gvimfullscreen_win32/tree/master
 
     " Location of the fullscreen fixer dll
-    let g:gvim_fullscreen_dll="gvimfullscreen.dll"
 
     function! ToggleFullscreen()
+        let gvim_fullscreen_dll="e:\\Programy\\Vim\\gvimfullscreen.dll"
         call libcallnr(gvim_fullscreen_dll, "ToggleFullScreen", 0)
         redraw
     endfunction
 
     function! ForceFullscreen()
+        let gvim_fullscreen_dll="e:\\Programy\\Vim\\gvimfullscreen.dll"
         call libcallnr(gvim_fullscreen_dll, "ToggleFullScreen", 1)
         redraw
     endfunction
 
     function! ForceDoubleFullscreen()
+        let gvim_fullscreen_dll="e:\\Programy\\Vim\\gvimfullscreen.dll"
         call libcallnr(gvim_fullscreen_dll, "ToggleFullScreen", 3)
         redraw
     endfunction
@@ -275,23 +344,6 @@ elseif has('win32')
     noremap <F3> :Goyo<CR>:call FullscreenFix()<CR>
 endif
 
-""" Graphics
-
-" Set the delimiter to something less noisy
-" for example tmux's separator character
-:set fillchars+=vert:│
-
-" Treat underscores as "word" separators
-" :set iskeyword-=_
-
-if has('unix')
-    " Set the colorscheme to the one fitting pywal's settings
-    colorscheme wal
-elseif has('win32')
-    " 'pywal' is unavailable on Windows, but 'nord' is a very nice colorscheme
-    colorscheme nord
-endif
-
 "" Fonts
 if has('win32')
     set guifont=Consolas:h18
@@ -324,6 +376,25 @@ elseif has('win32')
     set guioptions-=M " left-hand scroll bar
 endif
 
+""" Graphics
+
+" Set the delimiter to something less noisy
+" for example tmux's separator character
+:set fillchars+=vert:│
+
+" Treat underscores as "word" separators
+" :set iskeyword-=_
+
+" Colorscheme setting needs to be done AFTER setting highlight colors
+" That way, the colorscheme can react and change accordingly
+if has('unix')
+    " Set the colorscheme to the one fitting pywal's settings
+    colorscheme wal
+elseif has('win32')
+    " 'pywal' is unavailable on Windows, but 'nord' is a very nice colorscheme
+    colorscheme nord
+endif
+
 """ Keybindings
 " Map Ctrl-hjkl to move between windows
 map <C-h> <C-w>h
@@ -332,12 +403,22 @@ map <C-k> <C-w>k
 map <C-l> <C-w>l
 
 """ Snippets
-
 " Trigger configuration. Do not use <tab> if you use
 " https://github.com/Valloric/YouCompleteMe
-let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsExpandTrigger="C-;"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 " If you want :UltiSnipsEdit to split your window
 let g:UltiSnipsEditSplit="vertical"
+
+if has('win32')
+    " Workaround for :UltiSnipsEdit so that it... works
+    " https://github.com/SirVer/ultisnips/issues/711
+
+    if exists($VIM_SNIPPETS_PATH)
+        echom "You need to set VIM_SNIPPETS_PATH in order to use snippets"
+    else
+        let g:UltiSnipsSnippetDirectories = [$VIM_SNIPPETS_PATH]
+    endif
+endif
