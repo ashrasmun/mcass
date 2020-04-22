@@ -1,0 +1,11 @@
+" This is an example of how _vimrc file should look on a Windows machine
+" to make sure that one, common, configuration that is kept under version
+" control is used.
+
+let vimrc_file="e:\\Programy\\Vim\\mcass\\bank\\home\\.vimrc"
+
+try
+    exec "source " . vimrc_file
+catch
+    echom "Cannot find the Vim configuration file: " . vimrc_file
+endtry
