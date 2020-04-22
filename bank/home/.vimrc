@@ -30,10 +30,14 @@ endif
 :nnoremap <Leader>e :set guifont=*<CR>
 
 " Quickly access this file
-if has('unix')
-    noremap <Leader>v :e $MYVIMRC<CR>
-elseif has ('win32')
-    noremap <Leader>v :e $MYVIMRC<CR>:set number relativenumber<CR>:<ESC>
+if exists("g:VIM_RC")
+    if has('unix')
+        noremap <Leader>v :execute 'edit!' g:VIM_RC<CR>
+    elseif has ('win32')
+        noremap <Leader>v :execute 'edit!' g:VIM_RC<CR>:set number relativenumber<CR>:<ESC>
+    endif
+else
+    echom "You need to set VIM_RC variable so that it points to this file"
 endif
 
 " Quickly source current file
@@ -85,11 +89,13 @@ nnoremap <Leader>f za
 
 "" Python
 " This is needed because the python is loaded dynamically
-if exists($VIM_PYTHON_PATH)
-    echom "You need to set VIM_PYTHON_PATH in order to use Python"
+if exists("g:VIM_PYTHON_PATH")
+    " For some reason, I cannot simply use 'set' here. The only way to 'set'
+    " these variables is to use 'let' + &...
+    let &pythonthreehome=g:VIM_PYTHON_PATH
+    let &pythonthreedll=g:VIM_PYTHON_PATH . "\\python37.dll"
 else
-    set pythonthreehome=$VIM_PYTHON_PATH\
-    set pythonthreedll=$VIM_PYTHON_PATH\python37.dll
+    echom "You need to set VIM_PYTHON_PATH in order to use Python"
 endif
 
 " Silently invoke Python3 just to skip the annoying warning in the beginning.
@@ -169,7 +175,7 @@ if has('unix')
     if empty(glob('~/.vim/autoload/plug.vim'))
         silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
             https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-        autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+        autocmd VimEnter * PlugInstall --sync | source g:VIM_RC
     endif
 endif
 
@@ -192,11 +198,11 @@ endif
 
     "" Programming related
     Plug 'cespare/vim-toml'
-    Plug 'Valloric/YouCompleteMe'
+    Plug 'Valloric/YouCompleteMe' ", { 'on': [] }
 
     " Snippets with all of their's dependencies
-    Plug 'SirVer/ultisnips'
-    Plug 'honza/vim-snippets'
+    Plug 'SirVer/ultisnips' ", { 'on': [] }
+    Plug 'honza/vim-snippets' ", { 'on': [] }
 
     " Python
     Plug 'vim-scripts/indentpython.vim'
@@ -436,9 +442,9 @@ if has('win32')
     " Workaround for :UltiSnipsEdit so that it... works
     " https://github.com/SirVer/ultisnips/issues/711
 
-    if exists($VIM_SNIPPETS_PATH)
-        echom "You need to set VIM_SNIPPETS_PATH in order to use snippets"
+    if exists("g:VIM_SNIPPETS_PATH")
+        let g:UltiSnipsSnippetDirectories = [g:VIM_SNIPPETS_PATH]
     else
-        let g:UltiSnipsSnippetDirectories = [$VIM_SNIPPETS_PATH]
+        echom "You need to set variable VIM_SNIPPETS_PATH in order to use snippets"
     endif
 endif

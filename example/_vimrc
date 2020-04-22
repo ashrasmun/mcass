@@ -1,11 +1,20 @@
 " This is an example of how _vimrc file should look on a Windows machine
-" to make sure that one, common, configuration that is kept under version
-" control is used.
+" to make sure that one, common, configuration is kept under version
+" control, is used.
+" Source the .vimrc from mcass repo
 
-let vimrc_file="e:\\Programy\\Vim\\mcass\\bank\\home\\.vimrc"
+" Local vimrc file
+let g:VIM_RC="e:\\Programy\\Vim\\mcass\\bank\\home\\.vimrc"
+
+" Local Python library path that should be used by Vim pluggins
+let g:VIM_PYTHON_PATH=resolve(expand($AppData . "\\..\\Local\\Programs\\Python\\Python37-32\\"))
+
+" UltiSnips requires the path to snippets to be defined on per
+" machine basis
+let g:VIM_SNIPPETS_PATH="e:\\Programy\\Vim\\vim81\\plugged\\vim-snippets\\UltiSnips\\"
 
 try
-    exec "source " . vimrc_file
+    exec "source " . g:VIM_RC
 catch
-    echom "Cannot find the Vim configuration file: " . vimrc_file
+    echom "Cannot find the Vim configuration file: " . g:VIM_RC
 endtry
