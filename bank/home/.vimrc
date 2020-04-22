@@ -1,4 +1,5 @@
 if has('unix')
+
     " All system-wide defaults are set in $VIMRUNTIME/archlinux.vim (usually just
     " /usr/share/vim/vimfiles/archlinux.vim) and sourced by the call to :runtime
     " you can find below. If you wish to change any of those settings, you should
@@ -25,6 +26,9 @@ endif
 :let mapleader = " "
 :nnoremap <Space> <Nop>
 
+:nnoremap <Leader>c :colorscheme
+:nnoremap <Leader>e :set guifont=*<CR>
+
 " Quickly access this file
 if has('unix')
     noremap <Leader>v :e $MYVIMRC<CR>
@@ -33,7 +37,7 @@ elseif has ('win32')
 endif
 
 " Quickly source current file
-:noremap <Leader>s :source %<CR>
+:noremap <Leader>s :wa<CR>:source %<CR>
 
 " Remove highlight after searching
 :noremap <Leader>n :noh<CR>
@@ -199,8 +203,23 @@ endif
     Plug 'vim-syntastic/syntastic'
     Plug 'nvie/vim-flake8'
 
-    " Windows specific plugins
-    Plug 'arcticicestudio/nord-vim'
+    " Colorschemes
+    Plug 'arcticicestudio/nord-vim' " It's great!
+    Plug 'danilo-augusto/vim-afterglow' " Too colorful
+    Plug 'AlessandroYorba/Alduin' " Feels heavy
+    Plug 'gregsexton/Atom', { 'on': [] }
+    Plug 'nightsense/carbonized' " Feels heavy
+    Plug 'tyrannicaltoucan/vim-deep-space' " Quite ok, colorful, but still calm
+    Plug 'whatyouhide/vim-gotham' " Quite ok
+    Plug 'jonathanfilip/vim-lucius' " NO
+    Plug 'owickstrom/vim-colors-paramount' " Quite minimalistic...
+    Plug 'cocopon/iceberg.vim' " Quite ok, but split triggers me
+    Plug 'morhetz/gruvbox' " Quite ok, but looks like a swamp
+    Plug 'jaredgorski/fogbell.vim' " Quite ok
+    Plug 'nanotech/jellybeans.vim' " Quite ok
+    Plug 'yorickpeterse/happy_hacking.vim' " Quite ok, highlights
+    " as bold and white spaces are highlighted too. very similar to
+    " gruvbox but the whitespace highlight makes me confused
 
     " Linux specific plugins
     if has('unix')
@@ -346,7 +365,8 @@ endif
 
 "" Fonts
 if has('win32')
-    set guifont=Consolas:h18
+    " set guifont=Consolas:h15
+    set guifont=Monaco:h16
 endif
 
 " Interface clean-up
@@ -392,7 +412,7 @@ if has('unix')
     colorscheme wal
 elseif has('win32')
     " 'pywal' is unavailable on Windows, but 'nord' is a very nice colorscheme
-    colorscheme nord
+    colorscheme gotham
 endif
 
 """ Keybindings
