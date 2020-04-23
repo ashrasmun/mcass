@@ -93,7 +93,7 @@ if exists("g:VIM_PYTHON_PATH")
     " For some reason, I cannot simply use 'set' here. The only way to 'set'
     " these variables is to use 'let' + &...
     let &pythonthreehome=g:VIM_PYTHON_PATH
-    let &pythonthreedll=g:VIM_PYTHON_PATH . "\\python37.dll"
+    let &pythonthreedll=g:VIM_PYTHON_DLL
 else
     echom "You need to set VIM_PYTHON_PATH in order to use Python"
 endif
@@ -315,20 +315,17 @@ elseif has('win32')
     " Location of the fullscreen fixer dll
 
     function! ToggleFullscreen()
-        let gvim_fullscreen_dll="e:\\Programy\\Vim\\gvimfullscreen.dll"
-        call libcallnr(gvim_fullscreen_dll, "ToggleFullScreen", 0)
+        call libcallnr(g:VIM_GVIMFULLSCREEN_DLL, "ToggleFullScreen", 0)
         redraw
     endfunction
 
     function! ForceFullscreen()
-        let gvim_fullscreen_dll="e:\\Programy\\Vim\\gvimfullscreen.dll"
-        call libcallnr(gvim_fullscreen_dll, "ToggleFullScreen", 1)
+        call libcallnr(g:VIM_GVIMFULLSCREEN_DLL, "ToggleFullScreen", 1)
         redraw
     endfunction
 
     function! ForceDoubleFullscreen()
-        let gvim_fullscreen_dll="e:\\Programy\\Vim\\gvimfullscreen.dll"
-        call libcallnr(gvim_fullscreen_dll, "ToggleFullScreen", 3)
+        call libcallnr(g:VIM_GVIMFULLSCREEN_DLL, "ToggleFullScreen", 3)
         redraw
     endfunction
 
@@ -421,7 +418,7 @@ if has('unix')
     colorscheme wal
 elseif has('win32')
     " 'pywal' is unavailable on Windows, but 'nord' is a very nice colorscheme
-    colorscheme gotham
+    :colorscheme gotham
 endif
 
 """ Keybindings
