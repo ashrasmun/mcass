@@ -135,6 +135,11 @@ let python_highlight_all=1
 " Highlight the searched result by default
 :set hlsearch
 
+" Give myself at least some basic information about the text file
+if has('win32')
+    set ruler
+endif
+
 " Remove all the swap / undo / backup files
 :set noundofile
 :set noswapfile
