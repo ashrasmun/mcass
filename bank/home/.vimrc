@@ -209,6 +209,9 @@ endif
     Plug 'vim-syntastic/syntastic'
     Plug 'nvie/vim-flake8'
 
+    " JavaScript
+    Plug 'pangloss/vim-javascript'
+
     " Colorschemes
     Plug 'arcticicestudio/nord-vim' " It's great!
     Plug 'danilo-augusto/vim-afterglow' " Too colorful
@@ -431,9 +434,21 @@ map <C-l> <C-w>l
 """ Snippets
 " Trigger configuration. Do not use <tab> if you use
 " https://github.com/Valloric/YouCompleteMe
-let g:UltiSnipsExpandTrigger="C-;"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+
+" https://github.com/SirVer/ultisnips/issues/376#issuecomment-69033351
+let g:UltiSnipsExpandTrigger="<NUL>"
+let g:ulti_expand_or_jump_res = 0
+function! <SID>ExpandSnippetOrReturn()
+  let snippet = UltiSnips#ExpandSnippetOrJump()
+  if g:ulti_expand_or_jump_res > 0
+    return snippet
+  else
+    return "\<CR>"
+  endif
+endfunction
+inoremap <expr> <CR> pumvisible() ? "<C-R>=<SID>ExpandSnippetOrReturn()<CR>" : "\<CR>"
 
 " If you want :UltiSnipsEdit to split your window
 let g:UltiSnipsEditSplit="vertical"
@@ -447,4 +462,12 @@ if has('win32')
     else
         echom "You need to set variable VIM_SNIPPETS_PATH in order to use snippets"
     endif
+endif
+
+" On Windows, sourcing vimrc results in the window being in a really weird
+" state. To fix that, the screen needs to be toggled twice at the end, so
+" please don't add anything below this line.
+if has('win32')
+    call ToggleFullscreen()
+    call ToggleFullscreen()
 endif
