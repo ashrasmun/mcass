@@ -423,6 +423,8 @@ endif
 
 " Colorscheme setting needs to be done AFTER setting highlight colors
 " That way, the colorscheme can react and change accordingly
+" NOTE: If you are ever to make colorscheme loading more robust, try this:
+" https://gist.github.com/romainl/379904f91fa40533175dfaec4c833f2f
 if has('unix')
     " Set the colorscheme to the one fitting pywal's settings
     colorscheme wal
