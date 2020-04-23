@@ -43,6 +43,8 @@ endif
 " On Windows, sourcing vimrc results in the window being in a really weird
 " state. To fix that, the screen needs to be toggled twice at the end, so
 " please don't add anything below this line.
+" TODO: Move all of the functions to the top of the file, as there's no notion
+" of function declaration in Vim script
 function! s:FixFullscreenAfterSource() abort
     if has('win32')
         call ToggleFullscreen()
@@ -382,7 +384,7 @@ endif
 "" Fonts
 if has('win32')
     " set guifont=Consolas:h15
-    set guifont=Monaco:h16
+    set guifont=Fira\ Mono:h16
 endif
 
 " Interface clean-up
