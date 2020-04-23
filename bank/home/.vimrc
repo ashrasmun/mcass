@@ -40,8 +40,18 @@ else
     echom "You need to set VIM_RC variable so that it points to this file"
 endif
 
+" On Windows, sourcing vimrc results in the window being in a really weird
+" state. To fix that, the screen needs to be toggled twice at the end, so
+" please don't add anything below this line.
+function! FixFullscreenAfterSource() abort
+    if has('win32')
+        call ToggleFullscreen()
+        call ToggleFullscreen()
+    endif
+endfunction
+
 " Quickly source current file
-:noremap <Leader>s :wa<CR>:source %<CR>
+:noremap <Leader>s :wa<CR>:source %<CR>:call FixFullscreenAfterSource()<CR>
 
 " Remove highlight after searching
 :noremap <Leader>n :noh<CR>
@@ -461,10 +471,3 @@ if has('win32')
     endif
 endif
 
-" On Windows, sourcing vimrc results in the window being in a really weird
-" state. To fix that, the screen needs to be toggled twice at the end, so
-" please don't add anything below this line.
-if has('win32')
-    call ToggleFullscreen()
-    call ToggleFullscreen()
-endif
