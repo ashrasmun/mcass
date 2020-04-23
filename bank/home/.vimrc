@@ -43,7 +43,7 @@ endif
 " On Windows, sourcing vimrc results in the window being in a really weird
 " state. To fix that, the screen needs to be toggled twice at the end, so
 " please don't add anything below this line.
-function! FixFullscreenAfterSource() abort
+function! s:FixFullscreenAfterSource() abort
     if has('win32')
         call ToggleFullscreen()
         call ToggleFullscreen()
@@ -51,24 +51,24 @@ function! FixFullscreenAfterSource() abort
 endfunction
 
 " Quickly source current file
-:noremap <Leader>s :wa<CR>:source %<CR>:call FixFullscreenAfterSource()<CR>
+:noremap <Leader>s :wa<CR>:source %<CR>:call <SID>FixFullscreenAfterSource()<CR>
 
 " Remove highlight after searching
 :noremap <Leader>n :noh<CR>
 
 "" Functions
 " This function trims the whole file!
-function! TrimTrailingWhitespaces() range
+function! s:TrimTrailingWhitespaces() range
     let l:save = winsaveview()
     keeppatterns %s/\s\+$//e
     call winrestview(l:save)
 endfunction
 
-:noremap <Leader>w :call TrimTrailingWhitespaces()<CR>
+:noremap <Leader>w :call <SID>TrimTrailingWhitespaces()<CR>
 
 " Joins multiple lines into one line without producing any spaces
 " Like gJ, but always remove spaces
-function! JoinSpaceless()
+function! s:JoinSpaceless()
     execute 'normal gJ'
 
     " Character under cursor is whitespace?
@@ -78,14 +78,14 @@ function! JoinSpaceless()
     endif
 endfunction
 
-:noremap <Leader>J :call JoinSpaceless()<CR>
+:noremap <Leader>J :call <SID>JoinSpaceless()<CR>
 
 " Remove all buffers but the one opened
-function! DeleteBuffersExceptOpened()
+function! s:DeleteBuffersExceptOpened()
     execute '%bdelete|edit #|normal `'
 endfunction
 
-:noremap <Leader>bd :call DeleteBuffersExceptOpened()<CR>
+:noremap <Leader>bd :call <SID>DeleteBuffersExceptOpened()<CR>
 
 "" Choose buffer
 :nnoremap <Leader>bb :buffers<CR>:b
@@ -324,30 +324,30 @@ elseif has('win32')
 
     " Location of the fullscreen fixer dll
 
-    function! ToggleFullscreen()
+    function! s:ToggleFullscreen()
         call libcallnr(g:VIM_GVIMFULLSCREEN_DLL, "ToggleFullScreen", 0)
         redraw
     endfunction
 
-    function! ForceFullscreen()
+    function! s:ForceFullscreen()
         call libcallnr(g:VIM_GVIMFULLSCREEN_DLL, "ToggleFullScreen", 1)
         redraw
     endfunction
 
-    function! ForceDoubleFullscreen()
+    function! s:ForceDoubleFullscreen()
         call libcallnr(g:VIM_GVIMFULLSCREEN_DLL, "ToggleFullScreen", 3)
         redraw
     endfunction
 
-    autocmd GUIEnter * call ForceFullscreen()
-    noremap <F11> :call ToggleFullscreen()<CR>
-    noremap <F12> :call ForceFullscreen()<CR>
-    noremap <s-F12> :call ForceDoubleFullscreen()<CR>
+    autocmd GUIEnter * call <SID>ForceFullscreen()
+    noremap <F11> :call <SID>ToggleFullscreen()<CR>
+    noremap <F12> :call <SID>ForceFullscreen()<CR>
+    noremap <s-F12> :call <SID>ForceDoubleFullscreen()<CR>
 
     " This function is here only to fix Goyo's behaviour in GVim while using the
     " gvimfullscreen.dll. Goyo methods are a bit unreliable, so we need to run
     " separate function after Goyo is done doing what it's doing.
-    function! FullscreenFix()
+    function! s:FullscreenFix()
         if g:goyo_state
             call ForceFullscreen()
         endif
@@ -376,7 +376,7 @@ elseif has('win32')
     autocmd! User GoyoLeave call <SID>goyo_leave()
 
     " Toggle Goyo (distration free writing)
-    noremap <F3> :Goyo<CR>:call FullscreenFix()<CR>
+    noremap <F3> :Goyo<CR>:call <SID>FullscreenFix()<CR>
 endif
 
 "" Fonts
