@@ -493,5 +493,3 @@ function! s:get_color(group, option) abort
 
     return l:option_only
 endfunction
-
-call <SID>get_color("Cursor", "guifg")
