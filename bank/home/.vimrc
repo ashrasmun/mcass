@@ -330,17 +330,17 @@ elseif has('win32')
 
     " Location of the fullscreen fixer dll
 
-    function! s:ToggleFullscreen()
+    function! s:ToggleFullscreen() abort
         call libcallnr(g:VIM_GVIMFULLSCREEN_DLL, "ToggleFullScreen", 0)
         redraw
     endfunction
 
-    function! s:ForceFullscreen()
+    function! s:ForceFullscreen() abort
         call libcallnr(g:VIM_GVIMFULLSCREEN_DLL, "ToggleFullScreen", 1)
-        redraw
+        redraw!
     endfunction
 
-    function! s:ForceDoubleFullscreen()
+    function! s:ForceDoubleFullscreen() abort
         call libcallnr(g:VIM_GVIMFULLSCREEN_DLL, "ToggleFullScreen", 3)
         redraw
     endfunction
@@ -354,8 +354,15 @@ elseif has('win32')
     " gvimfullscreen.dll. Goyo methods are a bit unreliable, so we need to run
     " separate function after Goyo is done doing what it's doing.
     function! s:FullscreenFix()
+        " Both of these are needed as Goyo doesn't cope well with colorscheme
+        " manipulation mixed with screen resolution fiddling. It looks
+        " completely horrible on Windows, but it's the only known method for
+        " me to make it work...
         if g:goyo_state
             call <SID>ForceFullscreen()
+        else
+            call <SID>ToggleFullscreen()
+            call <SID>ToggleFullscreen()
         endif
     endfunction
 
@@ -392,16 +399,16 @@ if has('win32')
     set guifont=Fira\ Mono:h16
 endif
 
+" Remove background from vertical splits to make it less noisy
+function! s:restore_highlight_settings()
+    :highlight VertSplit cterm=NONE ctermfg=8
+    :highlight StatusLineNC ctermfg=0
+    :highlight clear CursorLineNr
+    :highlight CursorLineNr cterm=bold
+endfunction
+
 " Interface clean-up
 if has('unix')
-    " Remove background from vertical splits to make it less noisy
-    function! s:restore_highlight_settings()
-        :highlight VertSplit cterm=NONE ctermfg=8
-        :highlight StatusLineNC ctermfg=0
-        :highlight clear CursorLineNr
-        :highlight CursorLineNr cterm=bold
-    endfunction
-
     call <SID>restore_highlight_settings()
 elseif has('win32')
     " The only variation of vim usable on Windows is GVim, so all the settings
@@ -428,16 +435,29 @@ endif
 " Treat underscores as "word" separators
 " :set iskeyword-=_
 
+" https://gist.github.com/romainl/379904f91fa40533175dfaec4c833f2f
+function! MyHighlights() abort
+    highlight VertSplit cterm=NONE ctermfg=8
+    highlight StatusLineNC ctermfg=0
+    highlight clear CursorLineNr
+    highlight CursorLineNr cterm=bold
+
+    call <SID>normalize_bg_color()
+endfunction
+
+augroup MyColors
+    autocmd!
+    autocmd ColorScheme * call MyHighlights()
+augroup END
+
 " Colorscheme setting needs to be done AFTER setting highlight colors
 " That way, the colorscheme can react and change accordingly
-" NOTE: If you are ever to make colorscheme loading more robust, try this:
-" https://gist.github.com/romainl/379904f91fa40533175dfaec4c833f2f
 if has('unix')
     " Set the colorscheme to the one fitting pywal's settings
     colorscheme wal
 elseif has('win32')
     " 'pywal' is unavailable on Windows, but 'nord' is a very nice colorscheme
-    colorscheme gotham
+    colorscheme gotham256
 endif
 
 """ Keybindings
@@ -493,3 +513,11 @@ function! s:get_color(group, option) abort
 
     return l:option_only
 endfunction
+
+" Make sure that color of the background for line numbers is the same
+" as the normal background
+function! s:normalize_bg_color() abort
+    let l:normal_bg_color = s:get_color("Normal", "guibg")
+    execute "hi LineNr guibg=" . l:normal_bg_color
+endfunction
+
