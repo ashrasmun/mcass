@@ -43,12 +43,11 @@ endif
 " On Windows, sourcing vimrc results in the window being in a really weird
 " state. To fix that, the screen needs to be toggled twice at the end, so
 " please don't add anything below this line.
-" TODO: Move all of the functions to the top of the file, as there's no notion
 " of function declaration in Vim script
 function! s:FixFullscreenAfterSource() abort
     if has('win32')
-        call ToggleFullscreen()
-        call ToggleFullscreen()
+        call <SID>ToggleFullscreen()
+        call <SID>ToggleFullscreen()
     endif
 endfunction
 
@@ -356,7 +355,7 @@ elseif has('win32')
     " separate function after Goyo is done doing what it's doing.
     function! s:FullscreenFix()
         if g:goyo_state
-            call ForceFullscreen()
+            call <SID>ForceFullscreen()
         endif
     endfunction
 
@@ -368,8 +367,9 @@ elseif has('win32')
     function! s:goyo_enter()
         let g:goyo_state = 1
 
-        " Remove tilde characters - works only for "nord" colorscheme!
-        :highlight EndOfBuffer guifg=#2E3440
+        " This works for 'nord' colorscheme
+        let l:eob_color = s:get_color("ColorColumn", "guifg")
+        execute "highlight EndOfBuffer guifg=" . l:eob_color
 
         set number relativenumber
     endfunction
@@ -437,7 +437,7 @@ if has('unix')
     colorscheme wal
 elseif has('win32')
     " 'pywal' is unavailable on Windows, but 'nord' is a very nice colorscheme
-    :colorscheme gotham
+    colorscheme gotham
 endif
 
 """ Keybindings
@@ -480,3 +480,18 @@ if has('win32')
     endif
 endif
 
+" Fetches desired color from the current colorscheme.
+" Example: get_color("Cursor", "guifg")
+function! s:get_color(group, option) abort
+    redir => l:hi_color
+    execute "hi! " . a:group
+    redir END
+
+    let l:option_idx = strridx(l:hi_color, a:option)
+    let l:value_only_idx = l:option_idx + 6
+    let l:option_only = strpart(l:hi_color, l:value_only_idx, 7)
+
+    return l:option_only
+endfunction
+
+call <SID>get_color("Cursor", "guifg")
