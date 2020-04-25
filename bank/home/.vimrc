@@ -376,7 +376,7 @@ elseif has('win32')
 
         " This works for 'nord' colorscheme
         let l:eob_color = s:get_color("ColorColumn", "guifg")
-        execute "highlight EndOfBuffer guifg=" . l:eob_color
+        silent! execute "highlight EndOfBuffer guifg=" . l:eob_color
 
         set number relativenumber
     endfunction
@@ -435,19 +435,40 @@ endif
 " Treat underscores as "word" separators
 " :set iskeyword-=_
 
+" Fetches desired color from the current colorscheme.
+" Example: get_color("Cursor", "guifg")
+function! s:get_color(group, option) abort
+    redir => l:hi_color
+    execute "silent! hi! " . a:group
+    redir END
+
+    let l:option_idx = strridx(l:hi_color, a:option)
+    let l:value_only_idx = l:option_idx + 6
+    let l:option_only = strpart(l:hi_color, l:value_only_idx, 7)
+
+    return l:option_only
+endfunction
+
+" Make sure that color of the background for line numbers is the same
+" as the normal background
+function! s:normalize_bg_color() abort
+    let l:normal_bg_color = s:get_color("Normal", "guibg")
+    execute "hi LineNr guibg=" . l:normal_bg_color
+endfunction
+
 " https://gist.github.com/romainl/379904f91fa40533175dfaec4c833f2f
-function! MyHighlights() abort
+function! s:my_highlights() abort
     highlight VertSplit cterm=NONE ctermfg=8
     highlight StatusLineNC ctermfg=0
     highlight clear CursorLineNr
     highlight CursorLineNr cterm=bold
 
-    call <SID>normalize_bg_color()
+    silent! call <SID>normalize_bg_color()
 endfunction
 
 augroup MyColors
     autocmd!
-    autocmd ColorScheme * call MyHighlights()
+    autocmd ColorScheme * call <SID>my_highlights()
 augroup END
 
 " Colorscheme setting needs to be done AFTER setting highlight colors
@@ -499,25 +520,3 @@ if has('win32')
         echom "You need to set variable VIM_SNIPPETS_PATH in order to use snippets"
     endif
 endif
-
-" Fetches desired color from the current colorscheme.
-" Example: get_color("Cursor", "guifg")
-function! s:get_color(group, option) abort
-    redir => l:hi_color
-    execute "hi! " . a:group
-    redir END
-
-    let l:option_idx = strridx(l:hi_color, a:option)
-    let l:value_only_idx = l:option_idx + 6
-    let l:option_only = strpart(l:hi_color, l:value_only_idx, 7)
-
-    return l:option_only
-endfunction
-
-" Make sure that color of the background for line numbers is the same
-" as the normal background
-function! s:normalize_bg_color() abort
-    let l:normal_bg_color = s:get_color("Normal", "guibg")
-    execute "hi LineNr guibg=" . l:normal_bg_color
-endfunction
-
