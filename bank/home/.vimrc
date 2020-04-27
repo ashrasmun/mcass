@@ -331,15 +331,37 @@ elseif has('win32')
     " Location of the fullscreen fixer dll
 
     function! s:ToggleFullscreen() abort
-        call libcallnr(g:VIM_GVIMFULLSCREEN_DLL, "ToggleFullScreen", 0)
+        let l:bg_color = s:get_color("Normal", "guibg")
+        let l:bg_color_value = s:value_only(bg_color)
+
+        if !l:bg_color_value
+            echom 's:ToggleFullscreen: The color value is probably 
+                        \not set properly'
+            return
+        endif
+
+        silent call libcallnr(g:VIM_GVIMFULLSCREEN_DLL, "SetBackgroundColor", bg_color_value)
+        silent call libcallnr(g:VIM_GVIMFULLSCREEN_DLL, "ToggleFullScreen", 0)
         redraw
     endfunction
 
     function! s:ForceFullscreen() abort
-        call libcallnr(g:VIM_GVIMFULLSCREEN_DLL, "ToggleFullScreen", 1)
+        let l:bg_color = s:get_color("Normal", "guibg")
+        let l:bg_color_value = s:value_only(bg_color)
+
+        if !l:bg_color_value
+            echom 's:ForceFullscreen: The color value is probably 
+                        \not set properly'
+            return
+        endif
+
+        silent call libcallnr(g:VIM_GVIMFULLSCREEN_DLL, "SetBackgroundColor", bg_color_value)
+        silent call libcallnr(g:VIM_GVIMFULLSCREEN_DLL, "ToggleFullScreen", 1)
         redraw!
     endfunction
 
+    " TODO: fix it :) It just doesn't work, and by it I mean the function
+    " inside the .dll
     function! s:ForceDoubleFullscreen() abort
         call libcallnr(g:VIM_GVIMFULLSCREEN_DLL, "ToggleFullScreen", 3)
         redraw
@@ -449,6 +471,11 @@ function! s:get_color(group, option) abort
     return l:option_only
 endfunction
 
+" This function assumes, that the color is provided in #123456 format
+function! s:value_only(color_hex_code) abort
+    return str2nr(strpart(a:color_hex_code, 1, 6), 16)
+endfunction
+
 " Make sure that color of the background for line numbers is the same
 " as the normal background
 function! s:normalize_bg_color() abort
@@ -479,6 +506,8 @@ if has('unix')
 elseif has('win32')
     " 'pywal' is unavailable on Windows, but 'nord' is a very nice colorscheme
     colorscheme gotham256
+    " colorscheme nord
+    " colorscheme gruvbox
 endif
 
 """ Keybindings
