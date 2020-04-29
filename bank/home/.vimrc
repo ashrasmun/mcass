@@ -418,7 +418,7 @@ endif
 "" Fonts
 if has('win32')
     " set guifont=Consolas:h15
-    set guifont=Fira\ Mono:h16
+    set guifont=Fira\ Mono:h14
 endif
 
 " Remove background from vertical splits to make it less noisy
@@ -517,6 +517,12 @@ map <C-j> <C-w>j
 map <C-k> <C-w>k
 map <C-l> <C-w>l
 
+" Enable these mappings for terminal as well
+tmap <C-h> <C-w>h
+tmap <C-j> <C-w>j
+tmap <C-k> <C-w>k
+tmap <C-l> <C-w>l
+
 """ Snippets
 " Trigger configuration. Do not use <tab> if you use
 " https://github.com/Valloric/YouCompleteMe
@@ -549,3 +555,29 @@ if has('win32')
         echom "You need to set variable VIM_SNIPPETS_PATH in order to use snippets"
     endif
 endif
+
+"" Terminal
+let s:toggle_term = "<Leader>t"
+
+" TODO: Instead of killing the terminal, it would be nice to just hide it
+let s:term_buf_nr = -1
+function! ToggleTerminal() abort
+    if s:term_buf_nr == -1
+        execute "botright terminal"
+        let s:term_buf_nr = bufnr("$")
+    else
+        execute "bdelete! " . s:term_buf_nr
+        let s:term_buf_nr = -1
+    endif
+endfunction
+
+silent execute "nnoremap " . s:toggle_term . " :call ToggleTerminal()<CR>"
+silent execute "tnoremap " . s:toggle_term . " <C-w>N:call ToggleTerminal()<CR>"
+
+" Tips and Tricks:
+"
+" Execute command without need to press ENTER after it's invocation:
+" :exe ":!<command>" | redraw
+"
+" Run last command:
+" @:
