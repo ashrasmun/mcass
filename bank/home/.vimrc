@@ -27,14 +27,14 @@ endif
 :nnoremap <Space> <Nop>
 
 :nnoremap <Leader>c :colorscheme
-:nnoremap <Leader>e :set guifont=*<CR>
+:nnoremap <silent> <Leader>e :set guifont=*<CR>
 
 " Quickly access this file
 if exists("g:VIM_RC")
     if has('unix')
-        noremap <Leader>v :execute 'edit!' g:VIM_RC<CR>
+        noremap <silent> <Leader>v :execute 'edit!' g:VIM_RC<CR>
     elseif has ('win32')
-        noremap <Leader>v :execute 'edit!' g:VIM_RC<CR>:set number relativenumber<CR>:<ESC>
+        noremap <silent> <Leader>v :execute 'edit!' g:VIM_RC<CR>:set number relativenumber<CR>:<ESC>
     endif
 else
     echom "You need to set VIM_RC variable so that it points to this file"
@@ -52,10 +52,10 @@ function! s:FixFullscreenAfterSource() abort
 endfunction
 
 " Quickly source current file
-:noremap <Leader>s :wa<CR>:source %<CR>:call <SID>FixFullscreenAfterSource()<CR>
+:noremap <silent> <Leader>s :wa<CR>:exe "source " . g:VIM_RC<CR>:call <SID>FixFullscreenAfterSource()<CR>
 
 " Remove highlight after searching
-:noremap <Leader>n :noh<CR>
+:noremap <silent> <Leader>n :noh<CR>
 
 "" Functions
 " This function trims the whole file!
@@ -65,7 +65,7 @@ function! s:TrimTrailingWhitespaces() range
     call winrestview(l:save)
 endfunction
 
-:noremap <Leader>w :call <SID>TrimTrailingWhitespaces()<CR>
+:noremap <silent> <Leader>w :call <SID>TrimTrailingWhitespaces()<CR>
 
 " Joins multiple lines into one line without producing any spaces
 " Like gJ, but always remove spaces
@@ -79,7 +79,7 @@ function! s:JoinSpaceless()
     endif
 endfunction
 
-:noremap <Leader>J :call <SID>JoinSpaceless()<CR>
+:noremap <silent> <Leader>J :call <SID>JoinSpaceless()<CR>
 
 " Remove all buffers but the one opened
 function! s:DeleteBuffersExceptOpened()
@@ -308,7 +308,7 @@ noremap <Leader>nf :NERDTreeFind<CR>
 let g:goyo_width=80
 
 if has('unix')
-    noremap <F3> :Goyo<Enter>
+    noremap <silent> <F3> :Goyo<Enter>
 
     function! s:init_on_entering_goyo()
         silent !i3-msg fullscreen enable
@@ -368,9 +368,9 @@ elseif has('win32')
     endfunction
 
     autocmd GUIEnter * call <SID>ForceFullscreen()
-    noremap <F11> :call <SID>ToggleFullscreen()<CR>
-    noremap <F12> :call <SID>ForceFullscreen()<CR>
-    noremap <s-F12> :call <SID>ForceDoubleFullscreen()<CR>
+    noremap <silent> <F11> :call <SID>ToggleFullscreen()<CR>
+    noremap <silent> <F12> :call <SID>ForceFullscreen()<CR>
+    noremap <silent> <s-F12> :call <SID>ForceDoubleFullscreen()<CR>
 
     " This function is here only to fix Goyo's behaviour in GVim while using the
     " gvimfullscreen.dll. Goyo methods are a bit unreliable, so we need to run
@@ -412,13 +412,16 @@ elseif has('win32')
     autocmd! User GoyoLeave call <SID>goyo_leave()
 
     " Toggle Goyo (distration free writing)
-    noremap <F3> :Goyo<CR>:call <SID>FullscreenFix()<CR>
+    noremap <silent> <F3> :Goyo<CR>:call <SID>FullscreenFix()<CR>
 endif
 
 "" Fonts
 if has('win32')
     " set guifont=Consolas:h15
-    set guifont=Fira\ Mono:h14
+    " set guifont=Fira\ Mono:h16
+    " set guifont=Inconsolata:h14
+    " set guifont=monofur:h14
+    set guifont=ProFontWindows:h14,Fira\ Mono:h14
 endif
 
 " Remove background from vertical splits to make it less noisy
@@ -540,7 +543,7 @@ function! <SID>ExpandSnippetOrReturn()
     return "\<CR>"
   endif
 endfunction
-inoremap <expr> <CR> pumvisible() ? "<C-R>=<SID>ExpandSnippetOrReturn()<CR>" : "\<CR>"
+inoremap <silent> <expr> <CR> pumvisible() ? "<C-R>=<SID>ExpandSnippetOrReturn()<CR>" : "\<CR>"
 
 " If you want :UltiSnipsEdit to split your window
 let g:UltiSnipsEditSplit="vertical"
