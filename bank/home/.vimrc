@@ -22,6 +22,9 @@ if has('unix')
 endif
 
 """ Fundamental
+" Force english inside Vim
+language messages en
+
 " Set leader key to space
 :let mapleader = " "
 :nnoremap <Space> <Nop>
