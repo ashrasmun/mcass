@@ -276,6 +276,13 @@ map <Leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
 let g:ycm_key_list_previous_completion = ['<s-tab>', '<Up>'] " Works with Ctrl-P
 let g:ycm_key_list_select_completion = ['<tab>', '<Down>'] " Works with Ctrl-N
 
+" Disable question about custom ycm C++ code completion file
+let g:ycm_confirm_extra_conf = 0
+
+if exists("g:VIM_GLOBAL_YOUCOMPLETEME_CONF")
+    let g:ycm_global_ycm_extra_conf = g:VIM_GLOBAL_YOUCOMPLETEME_CONF
+endif
+
 "" vim-airline config
 if has('unix')
     " Setup the airline bar with fancy fonts
