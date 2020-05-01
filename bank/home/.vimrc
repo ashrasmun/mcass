@@ -591,6 +591,18 @@ if has('terminal')
 
     nnoremap <silent> <Leader>t :call <SID>ToggleTerminal()<CR>
     tnoremap <silent> <Leader>t <C-w>N:call <SID>ToggleTerminal()<CR>
+
+    " NOTE: Hmmm... hm....
+    " options-in-terminal
+    " au BufWinEnter * if &buftype == 'terminal' | setlocal bufhidden=hide | endif
+    "
+    "
+    " From help:
+    "                    *term++close* *term++open*
+    "        ++hidden    Open the terminal in a hidden buffer,
+    "
+    " This should help in navigating to terminal window
+    " setlocal switchbuf=useopen
 endif
 
 " Tips and Tricks:
