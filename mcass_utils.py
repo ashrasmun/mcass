@@ -30,11 +30,11 @@ def replacenth(string, sub, wanted, n):
 def prepare_path_in_bank(bank_location, file_path, user_name):
     final_directory_branch = \
         bank_location +      \
-        replacenth(file_path, '/' + user_name, "", 1) 
+        replacenth(file_path, '/' + user_name, "", 1)
 
     return final_directory_branch
 
-# NOTE: This works only for scripts located in subdirectory of 
+# NOTE: This works only for scripts located in subdirectory of
 # $HOME directory. I'm too tired to fix it now tho. It would be nice
 # to take care of it after introducing unit tests for these scripts,
 # as some of the functions start to get out of hand.
