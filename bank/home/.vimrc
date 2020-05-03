@@ -273,6 +273,8 @@ noremap <Leader>pu :source %<CR>:PlugUpdate<CR>
 let g:ycm_autoclose_preview_window_after_completion=1
 map <Leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
+let g:ycm_clangd_args=['-background-index']
+
 let g:ycm_key_list_previous_completion = ['<s-tab>', '<Up>'] " Works with Ctrl-P
 let g:ycm_key_list_select_completion = ['<tab>', '<Down>'] " Works with Ctrl-N
 
