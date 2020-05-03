@@ -230,7 +230,7 @@ endif
 
     " Snippets with all of their's dependencies
     Plug 'SirVer/ultisnips' ", { 'on': [] }
-    Plug 'honza/vim-snippets' ", { 'on': [] }
+    Plug 'ashrasmun/vim-snippets' ", { 'on': [] }
 
     " Python
     Plug 'vim-scripts/indentpython.vim'
