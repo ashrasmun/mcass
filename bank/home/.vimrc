@@ -119,15 +119,24 @@ if has('python3')
     silent! python3 1
 endif
 
+function! s:set_indentation_rules() abort
+    set tabstop=4
+    set softtabstop=4
+    set shiftwidth=4
+    set textwidth=79
+    set expandtab
+    set autoindent
+    set fileformat=unix
+endfunction
+
 " Add proper PEP8 indentation
-au BufNewFile,BufRead *.py
-    \ set tabstop=4
-    \ | set softtabstop=4
-    \ | set shiftwidth=4
-    \ | set textwidth=79
-    \ | set expandtab
-    \ | set autoindent
-    \ | set fileformat=unix
+autocmd BufNewFile,BufRead *.py call <SID>set_indentation_rules()
+
+" Propagate these settings to C-family of langauges
+autocmd BufNewFile,BufRead *.c   call <SID>set_indentation_rules()
+autocmd BufNewFile,BufRead *.cc  call <SID>set_indentation_rules()
+autocmd BufNewFile,BufRead *.cpp call <SID>set_indentation_rules()
+autocmd BufNewFile,BufRead *.h   call <SID>set_indentation_rules()
 
 let python_highlight_all=1
 
