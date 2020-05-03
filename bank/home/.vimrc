@@ -356,7 +356,7 @@ elseif has('win32')
         let l:bg_color_value = s:value_only(bg_color)
 
         if !l:bg_color_value
-            echom 's:ToggleFullscreen: The color value is probably 
+            echom 's:ToggleFullscreen: The color value is probably
                         \not set properly'
             return
         endif
@@ -371,7 +371,7 @@ elseif has('win32')
         let l:bg_color_value = s:value_only(bg_color)
 
         if !l:bg_color_value
-            echom 's:ForceFullscreen: The color value is probably 
+            echom 's:ForceFullscreen: The color value is probably
                         \not set properly'
             return
         endif
