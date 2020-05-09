@@ -220,17 +220,20 @@ endif
     Plug 'tpope/vim-repeat'
     Plug 'scrooloose/nerdtree'
     Plug 'easymotion/vim-easymotion'
+    Plug 'psliwka/vim-smoothie' , { 'on': [] }
 
     " File fuzzy searching
     Plug 'kien/ctrlp.vim'
 
     "" Programming related
     Plug 'cespare/vim-toml'
-    Plug 'Valloric/YouCompleteMe' ", { 'on': [] }
 
-    " Snippets with all of their's dependencies
-    Plug 'SirVer/ultisnips' ", { 'on': [] }
-    Plug 'ashrasmun/vim-snippets' ", { 'on': [] }
+    "" C++
+    Plug 'prabirshrestha/async.vim'
+    Plug 'prabirshrestha/vim-lsp'
+    Plug 'mattn/vim-lsp-settings'
+    Plug 'neoclide/coc.nvim', { 'branch': 'release' } " TODO: Find a way to get rid of autocompletion for this and use YCM instead
+    Plug 'jackguo380/vim-lsp-cxx-highlight'
 
     " Python
     Plug 'vim-scripts/indentpython.vim'
@@ -243,7 +246,7 @@ endif
     " Colorschemes
     Plug 'arcticicestudio/nord-vim' " It's great!
     Plug 'danilo-augusto/vim-afterglow' " Too colorful
-    Plug 'AlessandroYorba/Alduin' " Feels heavy
+    Plug 'AlessandroYorba/Alduin' " Feels heavy, but can be repaired - consider fixing it
     Plug 'gregsexton/Atom', { 'on': [] }
     Plug 'nightsense/carbonized' " Feels heavy
     Plug 'tyrannicaltoucan/vim-deep-space' " Quite ok, colorful, but still calm
@@ -251,12 +254,9 @@ endif
     Plug 'jonathanfilip/vim-lucius' " NO
     Plug 'owickstrom/vim-colors-paramount' " Quite minimalistic...
     Plug 'cocopon/iceberg.vim' " Quite ok, but split triggers me
-    Plug 'morhetz/gruvbox' " Quite ok, but looks like a swamp
     Plug 'jaredgorski/fogbell.vim' " Quite ok
     Plug 'nanotech/jellybeans.vim' " Quite ok
-    Plug 'yorickpeterse/happy_hacking.vim' " Quite ok, highlights
-    " as bold and white spaces are highlighted too. very similar to
-    " gruvbox but the whitespace highlight makes me confused
+    Plug 'micha/vim-colors-solarized'
 
     " Linux specific plugins
     if has('unix')
@@ -278,21 +278,24 @@ noremap <Leader>pu :source %<CR>:PlugUpdate<CR>
 "" CtrlP
 " let g:ctrlp_working_path_mode = 0
 
-"" YouCompleteMe
-let g:ycm_autoclose_preview_window_after_completion=1
-map <Leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
+"" coc.nvim
+" set filetype=on
+" autocmd FileType cpp let b:coc_suggest_disable = 1
+" autocmd FileType c let b:coc_suggest_disable = 1
 
-let g:ycm_clangd_args=['-background-index']
+" Use tab for trigger completion with characters ahead and navigate.
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-let g:ycm_key_list_previous_completion = ['<s-tab>', '<Up>'] " Works with Ctrl-P
-let g:ycm_key_list_select_completion = ['<tab>', '<Down>'] " Works with Ctrl-N
-
-" Disable question about custom ycm C++ code completion file
-let g:ycm_confirm_extra_conf = 0
-
-if exists("g:VIM_GLOBAL_YOUCOMPLETEME_CONF")
-    let g:ycm_global_ycm_extra_conf = g:VIM_GLOBAL_YOUCOMPLETEME_CONF
-endif
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
 
 "" vim-airline config
 if has('unix')
@@ -547,74 +550,12 @@ tmap <C-j> <C-w>j
 tmap <C-k> <C-w>k
 tmap <C-l> <C-w>l
 
-""" Snippets
-" Trigger configuration. Do not use <tab> if you use
-" https://github.com/Valloric/YouCompleteMe
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
-
-" https://github.com/SirVer/ultisnips/issues/376#issuecomment-69033351
-let g:UltiSnipsExpandTrigger="<NUL>"
-let g:ulti_expand_or_jump_res = 0
-function! <SID>ExpandSnippetOrReturn()
-  let snippet = UltiSnips#ExpandSnippetOrJump()
-  if g:ulti_expand_or_jump_res > 0
-    return snippet
-  else
-    return "\<CR>"
-  endif
-endfunction
-inoremap <silent> <expr> <CR> pumvisible() ? "<C-R>=<SID>ExpandSnippetOrReturn()<CR>" : "\<CR>"
-
-" If you want :UltiSnipsEdit to split your window
-let g:UltiSnipsEditSplit="vertical"
-
-if has('win32')
-    " Workaround for :UltiSnipsEdit so that it... works
-    " https://github.com/SirVer/ultisnips/issues/711
-
-    if exists("g:VIM_SNIPPETS_PATH")
-        let g:UltiSnipsSnippetDirectories = [g:VIM_SNIPPETS_PATH]
-    else
-        echom "You need to set variable VIM_SNIPPETS_PATH in order to use snippets"
-    endif
-endif
-
-"" Terminal
-if has('terminal')
-    " TODO: Instead of killing the terminal, it would be nice to just hide it
-    let s:term_buf_nr = -1
-    function! s:ToggleTerminal() abort
-        if s:term_buf_nr == -1
-            execute "botright terminal"
-            let s:term_buf_nr = bufnr("$")
-        else
-            try
-                execute "bdelete! " . s:term_buf_nr
-            catch
-                let s:term_buf_nr = -1
-                call <SID>ToggleTerminal()
-                return
-            endtry
-            let s:term_buf_nr = -1
-        endif
-    endfunction
-
-    nnoremap <silent> <Leader>t :call <SID>ToggleTerminal()<CR>
-    tnoremap <silent> <Leader>t <C-w>N:call <SID>ToggleTerminal()<CR>
-
-    " NOTE: Hmmm... hm....
-    " options-in-terminal
-    " au BufWinEnter * if &buftype == 'terminal' | setlocal bufhidden=hide | endif
-    "
-    "
-    " From help:
-    "                    *term++close* *term++open*
-    "        ++hidden    Open the terminal in a hidden buffer,
-    "
-    " This should help in navigating to terminal window
-    " setlocal switchbuf=useopen
-endif
+" TODO(05-05-20, ashrasmun): add leader key mappings for:
+" Starts with 'd', because of development
+" 1. compile code: <Leader>dc ?
+" 2. execute code: <Leader>dx ?
+" 3. set compile command: <Leader> dsc
+" 4. set execute command: <Leader> dsx
 
 " Tips and Tricks:
 "
