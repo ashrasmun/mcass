@@ -58,7 +58,7 @@ endfunction
 :noremap <silent> <Leader>s :wa<CR>:exe "source " . g:VIM_RC<CR>:call <SID>FixFullscreenAfterSource()<CR>
 
 " Remove highlight after searching
-:noremap <silent> <Leader>n :noh<CR>
+:noremap <silent> <Leader>/ :noh<CR>
 
 "" Functions
 " This function trims the whole file!
