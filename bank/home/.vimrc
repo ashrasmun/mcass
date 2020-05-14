@@ -550,6 +550,10 @@ tmap <C-j> <C-w>j
 tmap <C-k> <C-w>k
 tmap <C-l> <C-w>l
 
+"" Formatting
+command! FormatXML :%!python -c "import xml.dom.minidom, sys; print(xml.dom.minidom.parse(sys.stdin).toprettyxml())"
+command! FormatJSON :%!python -m json.tool
+
 " TODO(05-05-20, ashrasmun): add leader key mappings for:
 " Starts with 'd', because of development
 " 1. compile code: <Leader>dc ?
