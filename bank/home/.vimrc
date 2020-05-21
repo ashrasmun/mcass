@@ -398,19 +398,14 @@ endif
     Plug 'pangloss/vim-javascript'
 
     " Colorschemes
-    Plug 'arcticicestudio/nord-vim' " It's great!
-    Plug 'danilo-augusto/vim-afterglow' " Too colorful
-    Plug 'AlessandroYorba/Alduin' " Feels heavy, but can be repaired - consider fixing it
-    Plug 'gregsexton/Atom', { 'on': [] }
-    Plug 'nightsense/carbonized' " Feels heavy
-    Plug 'tyrannicaltoucan/vim-deep-space' " Quite ok, colorful, but still calm
-    Plug 'whatyouhide/vim-gotham' " Quite ok
-    Plug 'jonathanfilip/vim-lucius' " NO
-    Plug 'owickstrom/vim-colors-paramount' " Quite minimalistic...
-    Plug 'cocopon/iceberg.vim' " Quite ok, but split triggers me
-    Plug 'jaredgorski/fogbell.vim' " Quite ok
-    Plug 'nanotech/jellybeans.vim' " Quite ok
-    Plug 'micha/vim-colors-solarized'
+    Plug 'tyrannicaltoucan/vim-deep-space'    " Quite ok, colorful, but still calm
+    Plug 'whatyouhide/vim-gotham'             " Quite ok
+    Plug 'cocopon/iceberg.vim'                " Quite ok, but split triggers me
+    Plug 'arzg/vim-substrata'                 " +
+    Plug 'ludokng/vim-odyssey'                " +-
+    Plug 'seesleestak/duo-mini'               " +
+    Plug 'jacoborus/tender.vim'               " +
+    Plug 'tomasiser/vim-code-dark'            " well, it's vs
 
     " Linux specific plugins
     if has('unix')
