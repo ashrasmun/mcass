@@ -147,7 +147,7 @@ function! s:Columnize(_count, character, fline, lline) range abort
     " { slkdfjsldkfj, slfksjdlfk }
     " In this example, we would like to justify to the second row, not the
     " first one.
-    let CleanupBeforeChar = { line, c -> ":" . line . "s/\\( \\|\\t\\)*" . c . 
+    let CleanupBeforeChar = { line, c -> ":" . line . "s/\\( \\|\\t\\)*" . c .
                 \"/" . c . "/g"}
     for line in range(a:fline, a:lline)
         call <SID>debug_echom(CleanupBeforeChar(line, a:character))
