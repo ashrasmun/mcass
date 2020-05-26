@@ -139,6 +139,21 @@ function! s:Columnize(_count, character, fline, lline) range abort
         endif
     endfor
 
+    " Cleanup whitespaces between the word and character
+    " Why would we want to do it? We want to get rid of situations like the
+    " ones below.
+    " Example:
+    " { asdf asdf         , sdlkfjsldkfj }
+    " { slkdfjsldkfj, slfksjdlfk }
+    " In this example, we would like to justify to the second row, not the
+    " first one.
+    let CleanupBeforeChar = { line, c -> ":" . line . "s/\\( \\|\\t\\)*" . c . 
+                \"/" . c . "/g"}
+    for line in range(a:fline, a:lline)
+        call <SID>debug_echom(CleanupBeforeChar(line, a:character))
+        execute CleanupBeforeChar(line, a:character)
+    endfor
+
     " Find the line with the furthest character
     let l:ref_line = -1
     for line in range(a:fline, a:lline)
