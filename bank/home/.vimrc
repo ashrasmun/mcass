@@ -117,7 +117,6 @@ endfunction
 " TODO: Finish this
 " TODO: Ask stackoverflow, why using count instead of _count results in
 " variable being modified. That's a huge WTF moment
-" TODO: Change to Columnize
 function! s:Columnize(_count, character, fline, lline) range abort
     call <SID>debug_echom("Calling with _count: " . a:_count . " and " . a:character)
     call <SID>debug_echom("Operation on range:" . a:fline . ":" . a:lline)
@@ -386,23 +385,22 @@ endif
     Plug 'tpope/vim-repeat'
     Plug 'scrooloose/nerdtree'
     Plug 'easymotion/vim-easymotion'
-    Plug 'psliwka/vim-smoothie' " , { 'on': [] }
+
+    " Smooth scrolling when using Ctrl-d, Ctrl-u
+    "Plug 'psliwka/vim-smoothie' " , { 'on': [] }
 
     " Real-time substitution preview
     Plug 'markonm/traces.vim'
 
     " File fuzzy searching
-    Plug 'kien/ctrlp.vim'
+    " I cannot make it work...
+    "Plug 'kien/ctrlp.vim'
 
     "" Programming related
     Plug 'cespare/vim-toml'
 
     "" C++
-    Plug 'prabirshrestha/async.vim'
-    Plug 'prabirshrestha/vim-lsp'
-    Plug 'mattn/vim-lsp-settings'
-    Plug 'neoclide/coc.nvim', { 'branch': 'release' } " TODO: Find a way to get rid of autocompletion for this and use YCM instead
-    Plug 'jackguo380/vim-lsp-cxx-highlight'
+    " In progress...
 
     " Python
     Plug 'vim-scripts/indentpython.vim'
@@ -413,14 +411,14 @@ endif
     Plug 'pangloss/vim-javascript'
 
     " Colorschemes
-    Plug 'tyrannicaltoucan/vim-deep-space'    " Quite ok, colorful, but still calm
-    Plug 'whatyouhide/vim-gotham'             " Quite ok
-    Plug 'cocopon/iceberg.vim'                " Quite ok, but split triggers me
+    "Plug 'tyrannicaltoucan/vim-deep-space'    " Quite ok, colorful, but still calm
+    "Plug 'whatyouhide/vim-gotham'             " Quite ok
+    "Plug 'cocopon/iceberg.vim'                " Quite ok, but split triggers me
     Plug 'arzg/vim-substrata'                 " +
-    Plug 'ludokng/vim-odyssey'                " +-
-    Plug 'seesleestak/duo-mini'               " +
-    Plug 'jacoborus/tender.vim'               " +
-    Plug 'tomasiser/vim-code-dark'            " well, it's vs
+    "Plug 'ludokng/vim-odyssey'                " +-
+    "Plug 'seesleestak/duo-mini'               " +
+    "Plug 'jacoborus/tender.vim'               " +
+    "Plug 'tomasiser/vim-code-dark'            " well, it's vs
 
     " Linux specific plugins
     if has('unix')
@@ -438,28 +436,6 @@ noremap <Leader>pi :source %<CR>:PlugInstall<CR>
 
 " Plugin Update
 noremap <Leader>pu :source %<CR>:PlugUpdate<CR>
-
-"" CtrlP
-" let g:ctrlp_working_path_mode = 0
-
-"" coc.nvim
-" set filetype=on
-" autocmd FileType cpp let b:coc_suggest_disable = 1
-" autocmd FileType c let b:coc_suggest_disable = 1
-
-" Use tab for trigger completion with characters ahead and navigate.
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
 
 "" vim-airline config
 if has('unix')
@@ -548,8 +524,6 @@ elseif has('win32')
         redraw!
     endfunction
 
-    " TODO: fix it :) It just doesn't work, and by it I mean the function
-    " inside the .dll
     function! s:ForceDoubleFullscreen() abort
         call libcallnr(g:VIM_GVIMFULLSCREEN_DLL, "ToggleFullScreen", 3)
         redraw
@@ -609,7 +583,7 @@ if has('win32')
     " set guifont=Fira\ Mono:h16
     " set guifont=Inconsolata:h14
     " set guifont=monofur:h14
-    set guifont=ProFontWindows:h14,Fira\ Mono:h14
+    set guifont=Consolas:h10,ProFontWindows:h14,Fira\ Mono:h14
 endif
 
 " Remove background from vertical splits to make it less noisy
@@ -696,9 +670,10 @@ if has('unix')
     colorscheme wal
 elseif has('win32')
     " 'pywal' is unavailable on Windows, but 'nord' is a very nice colorscheme
-    colorscheme gotham256
+    " colorscheme gotham256
     " colorscheme nord
     " colorscheme gruvbox
+    colorscheme substrata
 endif
 
 """ Keybindings
