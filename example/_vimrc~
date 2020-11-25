@@ -1,0 +1,26 @@
+" This is an example of how _vimrc file should look on a Windows machine
+" to make sure that one, common, configuration is kept under version
+" control, is used.
+" Source the .vimrc from mcass repo
+
+" Local vimrc file
+let g:VIM_RC="w:\\sources\\git\\mcass\\bank\\home\\.vimrc"
+
+" Local Python library path that should be used by Vim pluggins
+let g:VIM_PYTHON_PATH=resolve(expand($AppData . "\\..\\Local\\Programs\\Python\\Python38-32\\"))
+
+let g:VIM_PYTHON_DLL=g:VIM_PYTHON_PATH . "\\python38.dll"
+
+" UltiSnips requires the path to snippets to be defined on per
+" machine basis
+let g:VIM_SNIPPETS_PATH="w:\\tools\\vim\\vim82\\plugged\\vim-snippets\\UltiSnips\\"
+
+" TEMPORARY
+" Location of gvimfullscreen dll
+let g:VIM_GVIMFULLSCREEN_DLL="w:\\tools\\vim\\gvimfullscreen_win32-master\\gvimfullscreen.dll"
+
+try
+    exec "source " . g:VIM_RC
+catch
+    echom "Cannot find the Vim configuration file: " . g:VIM_RC
+endtry
